@@ -1,0 +1,74 @@
+<html>
+
+<header>
+  <link rel="stylesheet" href="commons.css" />
+  <link rel="stylesheet" href="example-commons.css" />
+  <link rel="stylesheet" href="prism.css" />
+</header>
+
+<body>
+
+    <div class="demo-wrapper">
+      <div class="heatmap">
+
+      </div>
+    </div>
+
+</body>
+<script src="heatmap.min.js"></script>
+<script type="text/javascript">
+
+
+var HttpClient = function() {
+	this.get = function(aUrl, aCallback) {
+		var anHttpRequest = new XMLHttpRequest();
+		anHttpRequest.onreadystatechange = function() {
+			
+			if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+				aCallback(anHttpRequest.responseText);
+		}
+		anHttpRequest.open( "GET", aUrl, true );            
+		anHttpRequest.send( null );
+	}
+}
+
+
+
+var client = new HttpClient();
+
+
+
+
+function atualizar(){
+	client.get('/heatmap', function(response) {
+		var json = JSON.parse(response);
+		console.log(json);
+		var config = {
+				  container: document.querySelector('.heatmap'),
+				  radius: 70,
+				  maxOpacity: .7,
+				  minOpacity: 0,
+				  blur: .9,
+				  backgroundColor: '#c6c6f8',
+				  gradient: {
+				    // enter n keys between 0 and 1 here
+				    // for gradient color customization
+				    '.2': 'blue',
+				    '.5': 'yellow',
+				    '.95': 'red'
+				  }
+				};
+
+		var heatmapInstance = h337.create(config);
+			var data = {
+			  max: 30,
+			  min: 20,
+			  data: json.data
+			};
+			heatmapInstance.setData(data);	
+	});	
+}
+
+setInterval(atualizar, 1000);
+</script>
+</html>
